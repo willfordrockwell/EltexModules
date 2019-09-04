@@ -12,13 +12,13 @@ MODULE_DESCRIPTION("A simple hello-world-module");
 
 static int __init init_hello_module(void)
 {
-	printk(KERN_INFO "Hello module\n");
+	pr_info("Hello module\n");
 	return 0;
 }
 
 static void __exit cleanup_hello_module(void)
 {
-	printk(KERN_INFO "Bye module\n");
+	pr_info("Bye module\n");
 }
 
 module_init(init_hello_module);
