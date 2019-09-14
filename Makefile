@@ -1,6 +1,6 @@
 obj-m += my_module.o
 
-all: check build load test unload
+all: check build load test_read test_write unload log
 
 build:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
@@ -17,5 +17,11 @@ load:
 unload:
 	sudo rmmod my_module
 
-test:
+test_read:
 	sudo head -c20 /dev/test_module0
+
+test_write:
+	sudo echo "test" > /dev/test_module0
+
+log:
+	sudo dmesg -c

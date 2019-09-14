@@ -40,8 +40,6 @@ static int major;
 
 static dev_t dev;
 
-static char msg[BUFF_LEN];
-
 static struct class *class;
 static struct device *devices[MAX_MINOR];
 static struct cdev cdevs[MAX_MINOR];
@@ -137,21 +135,22 @@ static ssize_t read_device(struct file *filp, char __user *buff, size_t len,
 			   loff_t *offset)
 {
 	static int count;
+	int res;
+	char msg[BUFF_LEN];
 
-	len = (len > strlen(buff)) ? strlen(buff) : len;
-	sprintf(msg, "%d's hello\n", ++count);
-	if (copy_to_user(buff, msg, len)) {
-		pr_alert(MODULE_NAME "Error reading");
-		return -EFAULT;
-	}
-	return SUCCESS;
+	res = sprintf(msg, "%d's hello\n", ++count);
+	return simple_read_from_buffer(buff, len, offset, msg, res);
 }
 
 static ssize_t write_device(struct file *filp, const char *buff, size_t len,
 			    loff_t *offset)
 {
-	pr_info(MODULE_NAME ": Writed");
-	return SUCCESS;
+	int res;
+	char msg[BUFF_LEN];
+
+	res = simple_write_to_buffer(msg, BUFF_LEN, offset, buff, len);
+	pr_info(MODULE_NAME ": Writed from user: %s", msg);
+	return res;
 }
 
 module_init(init_chardev_module);
